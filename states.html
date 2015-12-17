@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+.bar {
+  fill: steelblue;
+}
+
+.bar:hover {
+  fill: brown;
+}
+
+.axis {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+	.state{
+		fill: none;
+		stroke: #a9a9a9;
+		stroke-width: 1;
+	}
+	.state:hover{
+		fill-opacity:0.5;
+	}
+	#tooltip {
+		position: absolute;
+		text-align: center;
+		padding: 20px;
+		margin: 10px;
+		font: 12px sans-serif;
+		background: lightsteelblue;
+		border: 1px;
+		border-radius: 2px;
+		pointer-events: none;
+	}
+	#tooltip h4{
+		margin:0;
+		font-size:14px;
+	}
+	#tooltip{
+		background:rgba(0,0,0,0.9);
+		border:1px solid grey;
+		border-radius:5px;
+		font-size:12px;
+		width:auto;
+		padding:4px;
+		color:white;
+		opacity:0;
+	}
+	#tooltip table{
+		table-layout:fixed;
+	}
+	#tooltip tr td{
+		padding:0;
+		margin:0;
+	}
+	#tooltip tr td:nth-child(1){
+		width:50px;
+	}
+	#tooltip tr td:nth-child(2){
+		text-align:center;
+	}
+</style>
+<body>
+<div id="tooltip"></div><!-- div to hold tooltip. -->
+<svg width="960" height="600" id="statesvg"></svg> <!-- svg to hold the map. -->
+<svg id="barsvg"></svg>
+<script src="uStates.js"></script> <!-- creates uStates. -->
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+/* Set up the bar chart */
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .1);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(10, "%");
+
+
+    var svg = d3.select("#barsvg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+/* For the map */
+	function tooltipHtml(n, d){	/* function to create html content string in tooltip div. */
+		return "<h4>"+n+"</h4><table>"+
+			"<tr><td>Low</td><td>"+(d.low)+"</td></tr>"+
+			"<tr><td>Average</td><td>"+(d.avg)+"</td></tr>"+
+			"<tr><td>High</td><td>"+(d.high)+"</td></tr>"+
+			"</table>";
+	}
+
+/* Get the data from the csv */
+  var stateData = [];
+  var data = {};
+  d3.csv("stateReports.csv", function(d) {
+    ["HI", "AK", "FL", "SC", "GA", "AL", "NC", "TN", "RI", "CT", "MA",
+    "ME", "NH", "VT", "NY", "NJ", "PA", "DE", "MD", "WV", "KY", "OH",
+    "MI", "WY", "MT", "ID", "WA", "DC", "TX", "CA", "AZ", "NV", "UT",
+    "CO", "NM", "OR", "ND", "SD", "NE", "IA", "MS", "IN", "IL", "MN",
+    "WI", "MO", "AR", "OK", "KS", "LS", "VA"]
+    	.forEach(function(state){
+          data[state] = {low:0, high:0, avg:0, color:"#ffffff"};
+      });
+
+    d.forEach(function(sd) {
+      suicide = +sd.suicide
+      data[sd.state] = {low:suicide, high:suicide, avg:suicide, color:d3.interpolate("#ffffcc", "#800026")(suicide/100)};
+    })
+
+    // Draw the map
+    uStates.draw("#statesvg", data, tooltipHtml);
+  });
+
+
+  d3.csv("stateReports.csv", type, function(error, data) {
+    if (error) throw error;
+    console.log(data);
+
+    x.domain(data.map(function(d) { return d.state; }));
+    y.domain([0, d3.max(data, function(d) { return d.suicide; })]);
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+      .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Frequency");
+
+    svg.selectAll(".bar")
+        .data(data)
+      .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d) { return x(d.state); })
+        .attr("width", x.rangeBand())
+        .attr("y", function(d) { return y(+d.suicide); })
+        .attr("height", function(d) { return height - y(+d.suicide); });
+  });
+
+  function type(d) {
+  d.suicide = d.suicide;
+  return d;
+}
+
+var req = new XMLHttpRequest();
+req.onreadystatechange = function(req, res) {
+  console.log(req);
+}
+req.open('GET', 'http://www.lgbtmap.org/equality_maps/profile_state/MA');
+req.send();
+</script>
+
+</body>

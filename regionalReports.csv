@@ -1,0 +1,6 @@
+region,respondents,states,workplace-discrimination,k12-harrassment,unemployment,homeowners,homelessness,police-harrassment,refused-medical,HIV+,suicide
+Mid Atlantic,1314,PA WV VA MD DE,88,74,13,30,14,26,17,3.0,35
+Midwestern,1292,NE KS MN IA MO WI MI IL IN OH KY,91,79,15,35,18,24,19,2.3,46
+New England,540,ME VT NH MA CT RI,91,81,10,28,13,30,15,0.09,36
+Western,1804,WA OR CA AK HI ID NV MT WY UT CO AZ NM,89,74,15,38,24,29,19,3.8,44
+Southern,1120,TX OK AR LA MS AL GA SC NC TN KY VA FL,92,83,13,14,41,25,22,1.3,40
