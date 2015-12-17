@@ -45,13 +45,15 @@
     <input type="radio" id="HIVpos" name="dimension" value="HIVpos"></input>
     <label for="HIVpos" class="radio" onclick="updateViz()">HIV+ Rate</label>
   </div>
+  <div id="aboutIssue">
+  </div>
   <div class="svgContainer">
-  <svg width="960" height="600" id="statesvg"></svg> <!-- svg to hold the map. -->
-</div><div class="svgContainer"><svg id="barsvg" width="960px"></svg></div>
-<h2 id="storylabel">Stories</h2>
-<p>
-  How has being transgender or gender non-conforming effected people personally?
-</p>
+    <svg width="960" height="600" id="statesvg"></svg> <!-- svg to hold the map. -->
+  </div><div class="svgContainer"><svg id="barsvg" width="960px"></svg></div>
+  <h2 id="storylabel">Stories</h2>
+  <p>
+    How has being transgender or gender non-conforming effected people personally?
+  </p>
   <div id="story-container">
     <div id="stories"></div>
     <h2 id="addyourstory">Add your story</h2>
@@ -71,24 +73,24 @@
         <input type="submit" id="storySubmit" onclick="populate()"></input>
       </form>
     </div>
-</div>
-<h2 id="lawlabel">Laws</h2>
+  </div>
+  <h2 id="lawlabel">Laws</h2>
   <p>
     Approximately 40% of the LGBT population lives in states prohibiting
     employment discrimination based on sexual orientation and gender identity
     [<a href="http://www.lgbtmap.org/equality-maps/non_discrimination_laws#sthash.SDxApAGK.dpuf">1</a>].
     Select a state to see more laws that cover the LGBT population. [<a href="http://transgenderlawcenter.org/equalitymap">source</a>]
   </p>
-<div id="laws">
-  <iframe id="stateLaws" src="http://www.lgbtmap.org/equality_maps/profile_state/MA?iframe=single" onload="setFrameSize()"></iframe>
-</div>
+  <div id="laws">
+    <iframe id="stateLaws" src="http://www.lgbtmap.org/equality_maps/profile_state/MA?iframe=single" onload="setFrameSize()"></iframe>
+  </div>
 </body>
 <script src="uStates.js"></script> <!-- creates uStates. -->
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://underscorejs.org/underscore-min.js"></script>
 <script src="templates.js"></script>
 <link href='https://fonts.googleapis.com/css?family=Fjalla+One'
-  rel='stylesheet' type='text/css'>
+rel='stylesheet' type='text/css'>
 <script>
 function setFrameSize() {
   console.log("setting iFrame size");
@@ -144,7 +146,7 @@ function updateStories(list, filter) {
   if (list) {
     list.forEach(function(e) {
       if (filter(e)) {
-      storiesHTML += storyTemplate(e);
+        storiesHTML += storyTemplate(e);
       }
     })
   }
@@ -161,6 +163,10 @@ function updateViz() {
 
 function getCheckedRadio(radio_group) {
   return document.querySelector('input[name = ' + radio_group + ']:checked').value;
+}
+
+function getRespondents(data) {
+  return +data.respondents;
 }
 
 function getValue(data) {
@@ -200,11 +206,16 @@ function getValue(data) {
 
 /* For the map */
 function tooltipHtml(n, d){	/* function to create html content string in tooltip div. */
-  return "<h4>"+n+"</h4><table>"+
-  "<tr><td>Low</td><td>"+(d.low)+"</td></tr>"+
-  "<tr><td>Average</td><td>"+(d.avg)+"</td></tr>"+
-  "<tr><td>High</td><td>"+(d.high)+"</td></tr>"+
-  "</table>";
+  htmlstr = "<h4>"+n+"</h4><table>"+
+  "<tr><td>Respondents</td><td>"+(d.respondents)+"</td></tr>"+
+  "<tr><td>" +
+  getCheckedRadio("dimension");
+  if (getCheckedRadio("dimension") != "respondents") {
+    htmlstr += "</td><td>"+(d.data)+"%</td></tr>"
+  } else {
+    htmlstr += "</td><td>"+(d.data)+"</td></tr>"
+  }
+  return htmlstr + "</table>";
 }
 
 /* Get the data from the csv */
@@ -218,12 +229,20 @@ function drawMap() {
     "CO", "NM", "OR", "ND", "SD", "NE", "IA", "MS", "IN", "IL", "MN",
     "WI", "MO", "AR", "OK", "KS", "LS", "VA"]
     .forEach(function(state){
-      data[state] = {low:0, high:0, avg:0, color:"#ffffff"};
+      data[state] = {respondents:0, data:0, color:"#ffffff"};
     });
 
     d.forEach(function(sd) {
       val = getValue(sd);
-      data[sd.state] = {low:val, high:val, avg:val, color:d3.interpolate("#ffffff", "#00A388")(val/100)};
+      if (getCheckedRadio("dimension") != "HIVpos") {
+        if (getCheckedRadio("dimension") != "respondents") {
+          data[sd.state] = {respondents:getRespondents(sd), data:val, color:d3.interpolate("#ffffff", "#00A388")(val/100)};
+        } else {
+          data[sd.state] = {respondents:getRespondents(sd), data:val, color:d3.interpolate("#ffffff", "#00A388")(val/906)};
+        }
+      } else {
+        data[sd.state] = {respondents:getRespondents(sd), data:val, color:d3.interpolate("#ffffff", "#00A388")(val)};
+      }
     })
 
     // Draw the map
@@ -286,7 +305,7 @@ function drawGraph() {
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  d3.csv("stateReports.csv", type, function(error, data) {
+  d3.csv("stateReports.csv", function(error, data) {
     if (error) throw error;
 
     x.domain(data.map(function(d) { return d.state; }));
@@ -305,7 +324,7 @@ function drawGraph() {
     .attr("y", 6)
     .attr("dy", ".71em")
     .style("text-anchor", "end")
-    .text("Frequency");
+    .text("% Respondents");
 
     svg.selectAll(".bar")
     .data(data)
@@ -319,10 +338,5 @@ function drawGraph() {
 
     d3.selectAll(".bar").on("click", selectState);
   });
-}
-
-function type(d) {
-  d.suicide = d.suicide;
-  return d;
 }
 </script>
