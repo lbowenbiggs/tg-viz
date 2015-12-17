@@ -1,8 +1,18 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<head>
+  <title>
+    Visualizing Transgender Discrimination by State
+  </title>
 <link rel="stylesheet" href="main.css">
+</head>
 <body>
 <div id="tooltip"></div><!-- div to hold tooltip. -->
+<header>
+<h1>Visualizing Transgender Discrimination by State</title>
+  <h2><a href="mailto:leo@wpi.edu">Leo Bowen-Biggs</a></h2>
+  <p>The National Center for Transgender Equality conducts the largest cencus of transgender and gender non-conforming people in the United States. Using data collected in 2011, I present a state-by-state comparison of discrimination faced by transgender people.</p>
+</header>
 <div id="dimensions">
   <input type="radio" id="respondents" name="dimension" value="respondents" checked="checked"></input>
   <label for="respondents" class="radio" onclick="updateViz()">Respondents</label>
@@ -38,13 +48,15 @@
 <script src="templates.js"></script>
 <script>
 updateViz();
-updateStories();
+updateStories(stories);
 
-function updateStories() {
+function updateStories(list) {
   var storiesHTML = "";
-  stories.forEach(function(e) {
+  if (list) {
+  list.forEach(function(e) {
     storiesHTML += storyTemplate(e);
   })
+}
   document.getElementById("stories").innerHTML = storiesHTML;
 }
 
@@ -55,7 +67,7 @@ function updateViz() {
   document.getElementById("statesvg").innerHTML = "";
   drawMap();
   drawGraph();
-//  drawLaws();
+  updateStories(stories);
 }
 
 function getCheckedRadio(radio_group) {
@@ -148,6 +160,14 @@ function selectState(d) {
   d3.select("#"+state).style("fill-opacity", "0.5");
   d3.select("#bar"+state).style("fill-opacity", "0.5");
   document.getElementById("laws").innerHTML = "<iframe src='http://www.lgbtmap.org/equality_maps/profile_state/"+state+"?iframe=single'></iframe>"
+
+  var storiesFiltered = [];
+  stories.forEach(function(e) {
+    if (e.state == state) {
+      storiesFiltered.push(e);
+    }
+  });
+  updateStories(storiesFiltered);
 }
 
 function drawGraph() {
