@@ -68,7 +68,7 @@
 		}
 
 		d3.select(id).selectAll(".state")
-			.data(uStatePaths).enter().append("path").attr("class","state").attr("d",function(d){ return d.d;})
+			.data(uStatePaths).enter().append("path").attr("class","state").attr("d",function(d){ return d.d;}).attr("id",function(d){return d.id;})
 			.style("fill",function(d){ return data[d.id].color; })
 			.on("mouseover", mouseOver).on("mouseout", mouseOut);
 	}

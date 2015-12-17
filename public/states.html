@@ -29,6 +29,11 @@
 		stroke: #a9a9a9;
 		stroke-width: 1;
 	}
+
+  .selected {
+    fill: green;
+  }
+
 	.state:hover{
 		fill-opacity:0.5;
 	}
@@ -75,6 +80,9 @@
 <div id="tooltip"></div><!-- div to hold tooltip. -->
 <svg width="960" height="600" id="statesvg"></svg> <!-- svg to hold the map. -->
 <svg id="barsvg"></svg>
+<div id="laws">
+  <iframe src="http://www.lgbtmap.org/equality_maps/profile_state/MA?iframe=single"></iframe>
+</div>
 <script src="uStates.js"></script> <!-- creates uStates. -->
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
@@ -135,12 +143,31 @@ var yAxis = d3.svg.axis()
 
     // Draw the map
     uStates.draw("#statesvg", data, tooltipHtml);
+
+    d3.select("#statesvg").selectAll(".state").on("click", selectState);
   });
 
+var lastSelected;
+function selectState(d) {
+  if (lastSelected) {
+    d3.select("#"+lastSelected).style("fill-opacity", "1");
+    d3.select("#bar"+lastSelected).style("fill-opacity", "1");
+  }
+  var state;
+  if (d.id) {
+    state = d.id;
+  } else {
+    state = d.state;
+  }
+  lastSelected = state;
+  d3.select("#"+state).style("fill-opacity", "0.5");
+  d3.select("#bar"+state).style("fill-opacity", "0.5");
+  document.getElementById("laws").innerHTML = "<iframe src='http://www.lgbtmap.org/equality_maps/profile_state/"+state+"?iframe=single'></iframe>"
+}
 
   d3.csv("stateReports.csv", type, function(error, data) {
     if (error) throw error;
-    console.log(data);
+    //console.log(data);
 
     x.domain(data.map(function(d) { return d.state; }));
     y.domain([0, d3.max(data, function(d) { return d.suicide; })]);
@@ -164,23 +191,19 @@ var yAxis = d3.svg.axis()
         .data(data)
       .enter().append("rect")
         .attr("class", "bar")
+        .attr("id", function(d){ return "bar"+d.state})
         .attr("x", function(d) { return x(d.state); })
         .attr("width", x.rangeBand())
         .attr("y", function(d) { return y(+d.suicide); })
         .attr("height", function(d) { return height - y(+d.suicide); });
+
+    d3.selectAll(".bar").on("click", selectState);
   });
 
   function type(d) {
   d.suicide = d.suicide;
   return d;
 }
-
-var req = new XMLHttpRequest();
-req.onreadystatechange = function(req, res) {
-  console.log(req);
-}
-req.open('GET', 'http://www.lgbtmap.org/equality_maps/profile_state/MA');
-req.send();
 </script>
 
 </body>
