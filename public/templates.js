@@ -1,8 +1,7 @@
 var storyTemplate = _.template(
-  "<article class='story'>" +
-  "<p><span class='year'><%= year %></span> " +
-  "<span class='state'><%= state %></span></p>" +
-  "<p class='body'><%= body %></p>" +
-  "<p class='author'>-<%= initials %></p>" +
-  "</article>"
+  "<div class='story'>" +
+  "<h3><span class='year'><%= year %></h3>" +
+  "<p class='body'>\"<%= body %>\"</p>" +
+  "<p>-<span class='author'><%= initials %></span>, <span class='state'><%= state %></span></p>" +
+  "</div>"
 )

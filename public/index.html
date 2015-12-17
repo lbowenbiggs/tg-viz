@@ -9,10 +9,20 @@
 <body>
   <div id="tooltip"></div><!-- div to hold tooltip. -->
   <header>
-    <h1>Visualizing Transgender Discrimination by State</h1>
-    <h2>By <a href="mailto:leo@wpi.edu">Leo Bowen-Biggs</a></h2>
-    <p>The National Center for Transgender Equality conducts the largest cencus of transgender and gender non-conforming people in the United States. Using data collected in 2011, I present a state-by-state comparison of discrimination faced by transgender people.</p>
+    <h1 id="maintitle" class="title">Visualizing Transgender Discrimination by State</h1>
+    <h2 class="title">By <a href="mailto:leo@wpi.edu">Leo Bowen-Biggs</a></h2>
+    <p>
+      The National Center for Transgender Equality conducts the largest census
+      of transgender and gender non-conforming people in the United States.
+      Using data collected in 2011, I present a state-by-state comparison of
+      discrimination faced by transgender people.
+    </p>
   </header>
+  <h2 id="stateslabel">Selected States</h2>
+  <p>
+    24 states had enough respondents that the National Center for Transgender
+    Equality could publish state reports. [<a href="http://www.transequality.org/issues/resources/injustice-every-turn-state-reports-national-transgender-discrimination-survey">Full Reports</a>]
+  </p>
   <div id="dimensions">
     <input type="radio" id="respondents" name="dimension" value="respondents" checked="checked"></input>
     <label for="respondents" class="radio" onclick="updateViz()">Respondents</label>
@@ -24,8 +34,8 @@
     <label for="k12Harrassment" class="radio" onclick="updateViz()">Reported Harrassment in k-12 Education</label>
     <input type="radio" id="unemployment" name="dimension" value="unemployment"></input>
     <label for="unemployment" class="radio" onclick="updateViz()">Unemployment Rate</label>
-    <input type="radio" id="homeowners" name="dimension" value="homeowners"></input>
-    <label for="homeowners" class="radio" onclick="updateViz()">Homeowner Rate</label>
+    <!--<input type="radio" id="homeowners" name="dimension" value="homeowners"></input>
+    <label for="homeowners" class="radio" onclick="updateViz()">Homeowner Rate</label>-->
     <input type="radio" id="homelessness" name="dimension" value="homelessness"></input>
     <label for="homelessness" class="radio" onclick="updateViz()">Respondents who had Experienced Homelessness</label>
     <input type="radio" id="policeHarrassment" name="dimension" value="policeHarrassment"></input>
@@ -38,21 +48,37 @@
   <div class="svgContainer">
   <svg width="960" height="600" id="statesvg"></svg> <!-- svg to hold the map. -->
 </div><div class="svgContainer"><svg id="barsvg" width="960px"></svg></div>
+<h2 id="storylabel">Stories</h2>
+<p>
+  How has being transgender or gender non-conforming effected people personally?
+</p>
   <div id="story-container">
     <div id="stories"></div>
+    <h2 id="addyourstory">Add your story</h2>
     <div id="storyForm">
       <form method="post" id="newStory" onsubmit="return false;">
+        <textarea rows="4" cols="50" id="storyText" name="storyText" form="newStory">Your story here</textarea>
+        <br/>
+        <label for="storyYear">What year did this happen?</label>
         <input type="number" name="year" id="storyYear"></input>
-        <label for="storyYear">Year</label>
-        <input type="text" name="initials" id="storyInitials"></input>
-        <label for="storyInitials">Initials</label>
+        <br/>
+        <label for="storyState">What state was this?</label>
         <input type="text" name="state" id="storyState" onChange="isState()"></input>
-        <label for="storyState">State</label>
+        <br/>
+        <label for="storyInitials">Your Initials</label>
+        <input type="text" name="initials" id="storyInitials"></input>
+        <br/>
         <input type="submit" id="storySubmit" onclick="populate()"></input>
       </form>
-      <textarea rows="4" cols="50" id="storyText" name="storyText" form="newStory">Your story here</textarea>
     </div>
 </div>
+<h2 id="lawlabel">Laws</h2>
+  <p>
+    Approximately 40% of the LGBT population lives in states prohibiting
+    employment discrimination based on sexual orientation and gender identity
+    [<a href="http://www.lgbtmap.org/equality-maps/non_discrimination_laws#sthash.SDxApAGK.dpuf">1</a>].
+    Select a state to see more laws that cover the LGBT population. [<a href="http://transgenderlawcenter.org/equalitymap">source</a>]
+  </p>
 <div id="laws">
   <iframe id="stateLaws" src="http://www.lgbtmap.org/equality_maps/profile_state/MA?iframe=single" onload="setFrameSize()"></iframe>
 </div>

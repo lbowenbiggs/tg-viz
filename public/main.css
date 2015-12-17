@@ -10,11 +10,14 @@ h1, h2, h3 {
   font-family: 'Fjalla One';
   font-size: 3em;
   color: #00A388;
-  text-align: center;
 }
 
 h2 {font-size: 2em;}
 h3 {font-size: 1em;}
+
+.title {
+  text-align: center;
+}
 
 a {
   color: #0972B0;
@@ -129,6 +132,10 @@ iframe {
   text-align:center;
 }
 
+.author {
+  font-style: italic;
+}
+
 label.radio {
   border: 1px solid #09A7BA;
   padding: 0.5em;
@@ -143,6 +150,10 @@ label.radio:hover {
   cursor: pointer;
 }
 
+input[type=text], input[type=number] {
+  margin: 0.2em;
+}
+
 input[type=radio] {
   display: none;
 }
@@ -151,9 +162,29 @@ input[type=radio]:checked + label.radio {
   background-color: #00A388;
 }
 
-article.story {
+textarea {
+  width: 100%;
+}
+
+#storyForm {
+  width: 80%;
+  margin: 0 auto;
+}
+
+div.story {
   padding: 1em;
-  margin: 0.2em;
+  margin: 2em;
   background-color: #eee;
   border-radius: 1em;
+  width: 40%;
+  box-sizing: border-box;
+}
+
+#stories {
+  width: 100%;
+  display: flex;
+  align-items: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
 }
