@@ -30,10 +30,23 @@
 <div id="laws">
   <iframe src="http://www.lgbtmap.org/equality_maps/profile_state/MA?iframe=single"></iframe>
 </div>
+<div id="stories"></div>
+<script src="stories.js"></script>
 <script src="uStates.js"></script> <!-- creates uStates. -->
 <script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://underscorejs.org/underscore-min.js"></script>
+<script src="templates.js"></script>
 <script>
 updateViz();
+updateStories();
+
+function updateStories() {
+  var storiesHTML = "";
+  stories.forEach(function(e) {
+    storiesHTML += storyTemplate(e);
+  })
+  document.getElementById("stories").innerHTML = storiesHTML;
+}
 
 function updateViz() {
   console.log("Drawing new data");
