@@ -10,7 +10,7 @@
   <div id="tooltip"></div><!-- div to hold tooltip. -->
   <header>
     <h1>Visualizing Transgender Discrimination by State</h1>
-    <h2><a href="mailto:leo@wpi.edu">Leo Bowen-Biggs</a></h2>
+    <h2>By <a href="mailto:leo@wpi.edu">Leo Bowen-Biggs</a></h2>
     <p>The National Center for Transgender Equality conducts the largest cencus of transgender and gender non-conforming people in the United States. Using data collected in 2011, I present a state-by-state comparison of discrimination faced by transgender people.</p>
   </header>
   <div id="dimensions">
@@ -35,11 +35,9 @@
     <input type="radio" id="HIVpos" name="dimension" value="HIVpos"></input>
     <label for="HIVpos" class="radio" onclick="updateViz()">HIV+ Rate</label>
   </div>
+  <div class="svgContainer">
   <svg width="960" height="600" id="statesvg"></svg> <!-- svg to hold the map. -->
-  <svg id="barsvg"></svg>
-  <div id="laws">
-    <iframe src="http://www.lgbtmap.org/equality_maps/profile_state/MA?iframe=single"></iframe>
-  </div>
+</div><div class="svgContainer"><svg id="barsvg" width="960px"></svg></div>
   <div id="story-container">
     <div id="stories"></div>
     <div id="storyForm">
@@ -54,13 +52,23 @@
       </form>
       <textarea rows="4" cols="50" id="storyText" name="storyText" form="newStory">Your story here</textarea>
     </div>
-  </div>
+</div>
+<div id="laws">
+  <iframe id="stateLaws" src="http://www.lgbtmap.org/equality_maps/profile_state/MA?iframe=single" onload="setFrameSize()"></iframe>
+</div>
 </body>
 <script src="uStates.js"></script> <!-- creates uStates. -->
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://underscorejs.org/underscore-min.js"></script>
 <script src="templates.js"></script>
+<link href='https://fonts.googleapis.com/css?family=Fjalla+One'
+  rel='stylesheet' type='text/css'>
 <script>
+function setFrameSize() {
+  console.log("setting iFrame size");
+  console.log(document.getElementById("stateLaws"));
+}
+
 updateViz();
 getStories(function(e) {return true;});
 
@@ -189,7 +197,7 @@ function drawMap() {
 
     d.forEach(function(sd) {
       val = getValue(sd);
-      data[sd.state] = {low:val, high:val, avg:val, color:d3.interpolate("#ffffcc", "#800026")(val/100)};
+      data[sd.state] = {low:val, high:val, avg:val, color:d3.interpolate("#ffffff", "#00A388")(val/100)};
     })
 
     // Draw the map
